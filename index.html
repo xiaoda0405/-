@@ -235,7 +235,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
     </div>
     <div class="moment-list" id="momentList"></div>
     <div class="tab-bar">
-      <div class="tab" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>微信</div>
+      <div class="tab" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>聊天</div>
       <div class="tab active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>发现</div>
       <div class="tab" onclick="openMe()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>我</div>
     </div>
@@ -255,7 +255,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
     </div>
     <div class="me-tip" id="meTip"></div>
     <div class="tab-bar">
-      <div class="tab" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>微信</div>
+      <div class="tab" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg></div>
       <div class="tab" onclick="showPage('page-discover')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>发现</div>
       <div class="tab active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>我</div>
     </div>
@@ -316,7 +316,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
   <div class="overlay" id="uploadOverlay">
     <div class="upload-sheet">
       <div class="tf-title">上传截图</div>
-      <p style="text-align:center;color:#666;font-size:14px;margin-bottom:16px" id="uploadHint">可选择截图，也可直接确认上传</p>
+      <p style="text-align:center;color:#666;font-size:14px;margin-bottom:16px" id="uploadHint">选择截图，确认上传</p>
       <input type="file" id="uploadFile" accept="image/*" style="width:100%;margin-bottom:16px">
       <button class="tf-confirm" onclick="confirmUpload()">确认上传</button>
       <div class="tf-cancel" onclick="closeOverlay('uploadOverlay')">取消</div>
@@ -331,9 +331,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
   <div class="ending-screen" id="endingScreen">
     <h2>好友已删除</h2>
-    <p>她把你删了。<br>聊天记录还在，但再也发不出去消息。<br><br>—— 前期结束 ——</p>
+    <p>她把你删了…<br>只剩下聊天记录还在，但再也发不出去消息。<br><br>—— 游戏结束 ——</p>
     <div class="tip-box">
-      <div class="tip-text">游戏玩完了，那就上贡叭，是8.88还是18.88还是48.88还是88.88呢？白嫖也没关系呢，只是小达这么辛苦会很失望呢～</div>
+      <div class="tip-text">游戏玩完了，那就上贡叭，是8.88还是18.88还是48.88还是88.88呢？白嫖也没关系呢，只是小妲这么辛苦会很失望呢～</div>
       <div class="qr-row">
         <div class="qr-item"><img src="https://i.postimg.cc/ht4YLyP8/IMG-20260721-005339.png" alt="微信"><span>微信</span></div>
         <div class="qr-item"><img src="https://i.postimg.cc/SNh3sQBR/IMG-20260721-005325.jpg" alt="支付宝"><span>支付宝</span></div>
@@ -597,7 +597,7 @@ function addTransferBubble(amount,fromMe,skipSave,avOverride){
   // 对方转来：显示待收款，需点击领取；自己转出：已收款
   const status=fromMe?'已收款':'待收款';
   const clickAttr=fromMe?'':`onclick="receiveTransfer(this,${amount})" style="cursor:pointer"`;
-  row.innerHTML=`<div class="avatar-sm"><img src="${a}"></div><div class="bubble transfer" ${clickAttr} data-id="${id}"><div class="tf-header">微信转账</div><div class="tf-body"><div class="tf-amount">¥${Number(amount).toFixed(2)}</div><div class="tf-status">${status}</div></div></div>`;
+  row.innerHTML=`<div class="avatar-sm"><img src="${a}"></div><div class="bubble transfer" ${clickAttr} data-id="${id}"><div class="tf-header">转账</div><div class="tf-body"><div class="tf-amount">¥${Number(amount).toFixed(2)}</div><div class="tf-status">${status}</div></div></div>`;
   $("chatArea").appendChild(row);scrollChat();
   if(!skipSave) saveHistory({type:"transfer",amount,fromMe,av:a,received:fromMe});
 }
@@ -697,7 +697,7 @@ function startDay4(){
   herSay("去找你妈借钱。自己编理由。借到的全部交上来。",()=>{
     dayFlags.needMomMoney=true;dayFlags.momDone=false;
     setInputHint("");
-    showAction("去「妈妈」聊天编理由借钱，收到后回主人处转账");
+    showAction("去找「妈妈」聊天编理由借钱，收到后回来转账");
   });
 }
 function startDay5(){
@@ -713,7 +713,7 @@ function startDay6(){
   herSay("今天去求你爸借钱。自己编号理由哦。记得全部给我。",()=>{
     dayFlags.needDadMoney=true;dayFlags.dadDone=false;
     setInputHint("");
-    showAction("去「爸爸」聊天借钱，收到后转给主人");
+    showAction("去找「爸爸」聊天借钱，收到后转给主人");
   });
 }
 function startDay7(){
@@ -725,7 +725,7 @@ function startDay7(){
 }
 function startDay8(){
   addTimeSep(dayMeta[8].dateStr);
-  herSay("再去榨你爸妈一次。两边都得要哦。",()=>{
+  herSay("再去找你爸妈借一次。两边都得要哦。",()=>{
     dayFlags.needMomMoney2=true;dayFlags.needDadMoney2=true;dayFlags.momDone=false;dayFlags.dadDone=false;
     setInputHint("");
     showAction("分别去借，再转给主人");
@@ -791,7 +791,7 @@ function handleMasterReply(text){
       step=1; setInputHint("");
       herSay("吃完就得去锻炼。厕所隔间，磕100下头。限时，磨蹭就别怪我骂你。",()=>{
         addLinkBubble("https://ketou-game.vercel.app/");
-        herSay("链接在这。磕完用 + 号发截图上来。",()=>{
+        herSay("快点！",()=>{
           startTimer(60,()=>{if(!dayFlags.day2)herSay("这么慢？真废物！连磕头都不利索。")});
           showUploadAction("点击 + 号 → 相册 发送磕头截图");
         });
@@ -1007,7 +1007,7 @@ function confirmUpload(){
   addBubble("me","[图片]");
   if(currentChat==="主人"){
     if(currentDay===2){dayFlags.day2=true;setTimeout(()=>{herSay("勉勉强强。滚吧。",()=>showNextDay())},400)}
-    else if(currentDay===3){dayFlags.day3=true;setTimeout(()=>{herSay("丢人现眼的样子我记下了。",()=>showNextDay())},400)}
+    else if(currentDay===3){dayFlags.day3=true;setTimeout(()=>{herSay("hhhh，要是被发现那就完蛋了叭。",()=>showNextDay())},400)}
     else if(currentDay===5){
       if(dayFlags.day5step===1){dayFlags.day5step=2;setTimeout(()=>{herSay("就这？现在就地射出来，把精液也拍清楚上传。",()=>showAction("点击 + 号 → 相册 上传精液照片"))},400)}
       else{dayFlags.day5=true;setTimeout(()=>{herSay("脏东西。收着。",()=>showNextDay())},400)}
@@ -1033,7 +1033,7 @@ function confirmUpload(){
             // 回主人处继续
             setTimeout(()=>{
               dayFlags.day9=true;
-              alert("女同事已将你删除。回到「主人」继续。");
+              alert("女同事已将你删除。");
             },800);
           },1000);
         },AVATAR_COL);
