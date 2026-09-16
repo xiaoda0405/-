@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>控制权上交 · 微信聊天文游</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;color:#111;padding:10px}
+.phone{width:360px;height:680px;max-height:92vh;background:#ededed;border-radius:32px;box-shadow:0 12px 40px rgba(0,0,0,.5);overflow:hidden;position:relative;display:flex;flex-direction:column;border:6px solid #111}
+.status-bar{height:38px;background:#ededed;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:13px;font-weight:600;flex-shrink:0;z-index:10}
+.status-bar .icons{display:flex;gap:5px;align-items:center}
+.battery{width:20px;height:10px;border:1.5px solid #000;border-radius:2px;position:relative}
+.battery::after{content:"";position:absolute;right:-3px;top:2.5px;width:2px;height:5px;background:#000;border-radius:0 1px 1px 0}
+.battery-level{position:absolute;left:1.5px;top:1.5px;bottom:1.5px;width:72%;background:#000;border-radius:1px}
+.nav{height:44px;background:#ededed;display:flex;align-items:center;justify-content:space-between;padding:0 10px;border-bottom:.5px solid #d0d0d0;position:relative;flex-shrink:0}
+.nav .back{display:flex;align-items:center;gap:2px;font-size:16px;cursor:pointer}
+.nav .back svg{width:11px;height:18px}
+.nav .title{position:absolute;left:50%;transform:translateX(-50%);font-size:16px;font-weight:600;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nav .sub{font-size:11px;color:#888;text-align:center;margin-top:-1px}
+.page{display:none;flex-direction:column;flex:1;overflow:hidden;height:100%}
+.page.active{display:flex}
+#page-setup{background:#fff;padding:40px 28px;justify-content:center}
+.setup-box h2{font-size:22px;margin-bottom:8px;text-align:center}
+.setup-box p{color:#888;font-size:13px;text-align:center;margin-bottom:28px}
+.setup-box label{display:block;font-size:13px;color:#666;margin-bottom:6px}
+.setup-box input{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:16px;margin-bottom:18px;outline:none}
+.setup-box input:focus{border-color:#07c160}
+.setup-btn{width:100%;background:#07c160;color:#fff;border:none;padding:14px;border-radius:8px;font-size:16px;cursor:pointer;margin-top:8px}
+.pwd-hint{font-size:12px;color:#aaa;margin-top:-12px;margin-bottom:16px}
+#page-main{background:#fff}
+.main-header{background:#ededed;padding:8px 16px 12px;border-bottom:.5px solid #d0d0d0;flex-shrink:0}
+.main-header h1{font-size:18px;font-weight:600}
+.search-bar{background:#fff;border-radius:6px;padding:8px 12px;color:#bbb;font-size:14px;margin-top:10px}
+.chat-list{flex:1;overflow-y:auto;background:#fff}
+.chat-item{display:flex;align-items:center;padding:12px 16px;gap:12px;border-bottom:.5px solid #f0f0f0;cursor:pointer}
+.chat-item:active{background:#f5f5f5}
+.chat-item .avatar{width:48px;height:48px;border-radius:6px;overflow:hidden;flex-shrink:0;background:#ddd}
+.chat-item .avatar img{width:100%;height:100%;object-fit:cover}
+.chat-item .info{flex:1;min-width:0}
+.chat-item .name-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.chat-item .name{font-size:16px;font-weight:500}
+.chat-item .time{font-size:12px;color:#bbb}
+.chat-item .preview{font-size:13px;color:#999;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-item .badge{background:#f43530;color:#fff;font-size:11px;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.tab-bar{height:52px;background:#f7f7f7;border-top:.5px solid #d0d0d0;display:flex;flex-shrink:0}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:10px;color:#999;gap:2px;cursor:pointer}
+.tab.active{color:#07c160}
+.tab svg{width:24px;height:24px}
+#page-chat{background:#ededed}
+.chat-area{flex:1;overflow-y:auto;padding:10px 10px 16px;display:flex;flex-direction:column;gap:12px}
+.chat-area::-webkit-scrollbar{width:0}
+.msg-row{display:flex;align-items:flex-start;gap:8px;max-width:100%}
+.msg-row.self{flex-direction:row-reverse}
+.avatar-sm{width:36px;height:36px;border-radius:5px;overflow:hidden;flex-shrink:0;background:#ccc}
+.avatar-sm img{width:100%;height:100%;object-fit:cover}
+.bubble{max-width:230px;padding:9px 11px;border-radius:5px;font-size:15px;line-height:1.45;position:relative;word-break:break-word;white-space:pre-wrap}
+.bubble.other{background:#fff;border-top-left-radius:2px}
+.bubble.self{background:#95ec69;border-top-right-radius:2px}
+.bubble.other::before{content:"";position:absolute;left:-5px;top:11px;border-top:5px solid transparent;border-bottom:5px solid transparent;border-right:5px solid #fff}
+.bubble.self::before{content:"";position:absolute;right:-5px;top:11px;border-top:5px solid transparent;border-bottom:5px solid transparent;border-left:5px solid #95ec69}
+.bubble.transfer{background:#fff;border:1px solid #e8e8e8;padding:0;overflow:hidden;max-width:220px}
+.bubble.transfer .tf-header{background:linear-gradient(135deg,#f5a623,#f7c948);color:#fff;padding:10px 12px;font-size:14px}
+.bubble.transfer .tf-body{padding:12px}
+.bubble.transfer .tf-amount{font-size:22px;font-weight:600;color:#333}
+.bubble.transfer .tf-status{font-size:12px;color:#999;margin-top:4px}
+.bubble.link-card{background:#fff;padding:12px;max-width:240px}
+.bubble.link-card a{color:#576b95;word-break:break-all;font-size:14px}
+.input-bar{background:#f7f7f7;border-top:.5px solid #d0d0d0;padding:7px 10px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.input-bar .icon-btn{width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.input-bar .icon-btn svg{width:26px;height:26px;fill:#555}
+.input-bar input{flex:1;background:#fff;border:none;border-radius:5px;padding:8px 12px;font-size:15px;outline:none;height:36px}
+.input-bar .send-btn{background:#07c160;color:#fff;border:none;border-radius:5px;padding:0 14px;height:36px;font-size:15px;cursor:pointer;display:none}
+.input-bar .send-btn.show{display:block}
+.safe-area{height:12px;background:#f7f7f7;flex-shrink:0}
+.action-panel{background:#f7f7f7;border-top:.5px solid #d0d0d0;padding:12px;flex-shrink:0;display:none}
+.action-panel.show{display:block}
+.action-btn{width:100%;background:#07c160;color:#fff;border:none;padding:12px;border-radius:8px;font-size:15px;cursor:pointer;margin-bottom:8px}
+.action-btn:last-child{margin-bottom:0}
+.timer-bar{text-align:center;font-size:13px;color:#f43530;margin-bottom:8px;font-weight:600}
+.next-day-btn{width:100%;background:#07c160;color:#fff;border:none;padding:14px;border-radius:8px;font-size:16px;cursor:pointer;display:none;margin:8px 10px;width:calc(100% - 20px)}
+.next-day-btn.show{display:block}
+#page-me{background:#ededed}
+.me-header{background:linear-gradient(135deg,#2a2a2a,#1a1a1a);color:#fff;padding:30px 20px 24px;text-align:center}
+.me-avatar{width:70px;height:70px;border-radius:8px;margin:0 auto 12px;overflow:hidden}
+.me-avatar img{width:100%;height:100%;object-fit:cover}
+.me-name{font-size:18px;font-weight:600}
+.me-list{background:#fff;margin-top:12px}
+.me-item{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:.5px solid #f0f0f0;font-size:15px}
+.me-item .value{color:#07c160;font-weight:600;font-size:18px}
+.me-tip{text-align:center;color:#888;font-size:13px;padding:20px}
+#page-discover{background:#ededed}
+.moment-compose{background:#fff;padding:16px;margin-bottom:12px;display:none}
+.moment-compose textarea{width:100%;border:1px solid #e0e0e0;border-radius:6px;padding:10px;font-size:15px;min-height:80px;outline:none;resize:none}
+.moment-compose .post-btn{margin-top:10px;background:#07c160;color:#fff;border:none;padding:8px 20px;border-radius:5px;font-size:14px;cursor:pointer;float:right}
+.moment-count{text-align:center;padding:12px;color:#07c160;font-size:14px;clear:both}
+.moment-list{flex:1;overflow-y:auto}
+.moment-item{background:#fff;padding:14px 16px;border-bottom:.5px solid #f0f0f0}
+.moment-item .m-name{font-size:15px;color:#576b95;font-weight:500;margin-bottom:6px}
+.moment-item .m-content{font-size:15px;line-height:1.5;margin-bottom:8px}
+.moment-item .m-img{width:100%;max-height:200px;object-fit:cover;border-radius:4px;margin:8px 0;display:block}
+.moment-item .m-time{font-size:12px;color:#999;margin-bottom:6px}
+.moment-item .m-actions{display:flex;gap:16px;font-size:13px;color:#576b95}
+.moment-item .m-actions span{cursor:pointer}
+.moment-item .m-comments{background:#f7f7f7;border-radius:4px;padding:8px;margin-top:8px;font-size:13px}
+.moment-item .m-comment{margin-bottom:4px;line-height:1.4}
+.moment-item .m-comment .c-name{color:#576b95;font-weight:500}
+.moment-item .m-comment-input{display:flex;gap:6px;margin-top:8px}
+.moment-item .m-comment-input input{flex:1;border:1px solid #e0e0e0;border-radius:4px;padding:6px 8px;font-size:13px;outline:none}
+.moment-item .m-comment-input button{background:#07c160;color:#fff;border:none;border-radius:4px;padding:6px 10px;font-size:12px;cursor:pointer}
+.chat-time-sep{text-align:center;font-size:11px;color:#999;padding:8px 0;flex-shrink:0}
+.typing-row{display:flex;align-items:flex-start;gap:8px}
+.typing-bubble{background:#fff;border-radius:5px;padding:10px 14px;display:flex;gap:4px;align-items:center}
+.typing-bubble span{width:6px;height:6px;background:#bbb;border-radius:50%;animation:typingDot 1.2s infinite}
+.typing-bubble span:nth-child(2){animation-delay:.2s}
+.typing-bubble span:nth-child(3){animation-delay:.4s}
+@keyframes typingDot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.bubble.self{animation:popIn .18s ease-out}
+@keyframes popIn{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
+.disclaimer{font-size:12px;color:#888;line-height:1.6;margin-bottom:20px;padding:12px;background:#f8f8f8;border-radius:8px;text-align:left}
+.overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:100;display:none;align-items:flex-end;justify-content:center}
+.overlay.show{display:flex}
+.transfer-sheet,.pwd-sheet,.upload-sheet{background:#fff;width:100%;border-radius:16px 16px 0 0;padding:20px 20px 30px}
+.tf-title{font-size:17px;font-weight:600;text-align:center;margin-bottom:18px}
+.tf-to{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding:10px;background:#f8f8f8;border-radius:8px}
+.tf-to img{width:40px;height:40px;border-radius:5px;object-fit:cover}
+.tf-amount-input{width:100%;border:none;border-bottom:2px solid #07c160;font-size:32px;font-weight:600;text-align:center;padding:12px 0;outline:none;margin-bottom:8px}
+.tf-hint{text-align:center;font-size:12px;color:#999;margin-bottom:16px}
+.tf-hint.error{color:#f43530}
+.tf-confirm{width:100%;background:#07c160;color:#fff;border:none;padding:14px;border-radius:8px;font-size:16px;cursor:pointer}
+.tf-cancel{text-align:center;margin-top:12px;color:#888;font-size:14px;cursor:pointer}
+.pwd-title{text-align:center;font-size:16px;margin-bottom:6px}
+.pwd-amount{text-align:center;font-size:28px;font-weight:600;margin-bottom:20px}
+.pwd-dots{display:flex;justify-content:center;gap:12px;margin-bottom:24px}
+.pwd-dot{width:14px;height:14px;border-radius:50%;border:1.5px solid #ccc;background:#fff}
+.pwd-dot.filled{background:#333;border-color:#333}
+.pwd-error{text-align:center;color:#f43530;font-size:13px;margin-bottom:12px;min-height:18px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.num-btn{background:#f5f5f5;border:none;padding:16px;font-size:22px;border-radius:8px;cursor:pointer}
+.num-btn.empty{background:transparent}
+#narrationOverlay{position:absolute;inset:0;background:#000;z-index:200;display:none;flex-direction:column;justify-content:center;align-items:center;padding:40px 28px;color:#e8e8e8}
+#narrationOverlay.show{display:flex}
+.nar-text{font-size:16px;line-height:1.9;text-align:center;min-height:80px;white-space:pre-wrap}
+.nar-time{margin-top:28px;font-size:13px;color:#888;opacity:0;transition:opacity .6s}
+.nar-time.show{opacity:1}
+.nar-continue{margin-top:36px;padding:10px 28px;border:1px solid #555;border-radius:20px;background:transparent;color:#aaa;font-size:14px;cursor:pointer;opacity:0;transition:opacity .5s}
+.nar-continue.show{opacity:1}
+.ending-screen{position:absolute;inset:0;background:#000;z-index:150;display:none;flex-direction:column;justify-content:center;align-items:center;color:#ccc;padding:40px;text-align:center}
+.ending-screen.show{display:flex}
+.ending-screen h2{color:#fff;margin-bottom:16px;font-size:20px}
+.ending-screen p{font-size:15px;line-height:1.7;margin-bottom:24px}
+.ending-screen button{background:#07c160;color:#fff;border:none;padding:12px 32px;border-radius:6px;font-size:15px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="status-bar">
+    <div class="time" id="clock">21:30</div>
+    <div class="icons">
+      <svg width="15" height="11" viewBox="0 0 17 12"><path d="M1 8.5h1.5v2H1zM4 6h1.5v4.5H4zM7 3.5h1.5V10.5H7zM10 1h1.5v9.5H10z" fill="#000"/></svg>
+      <svg width="14" height="11" viewBox="0 0 16 12"><path d="M8 0C4.5 0 1.5 2.2 0 5.5c1.5 3.3 4.5 5.5 8 5.5s6.5-2.2 8-5.5C14.5 2.2 11.5 0 8 0zm0 9c-2 0-3.5-1.5-3.5-3.5S6 2 8 2s3.5 1.5 3.5 3.5S10 9 8 9z" fill="#000"/></svg>
+      <div class="battery"><div class="battery-level"></div></div>
+    </div>
+  </div>
+
+  <div class="page active" id="page-setup">
+    <div class="setup-box">
+      <h2>控制权上交</h2>
+      <div class="disclaimer">
+        <b>免责声明</b><br>
+        本作品为虚构互动文字游戏，仅供娱乐。内容涉及成人主题与角色扮演，与现实无关。请理性游玩，勿将游戏行为代入现实生活。未满18岁请勿继续。
+      </div>
+      <label>你的名字</label>
+      <input type="text" id="inputName" placeholder="请输入你的名字" maxlength="8" value="">
+      <label>设置支付密码（6位数字）</label>
+      <input type="password" id="inputPwd" placeholder="请输入6位数字" maxlength="6" inputmode="numeric">
+      <div class="pwd-hint">转账时需要输入此密码</div>
+      <button class="setup-btn" onclick="finishSetup()">同意并进入</button>
+    </div>
+  </div>
+
+  <div class="page" id="page-main">
+    <div class="main-header"><h1>微信</h1><div class="search-bar">搜索</div></div>
+    <div class="chat-list" id="chatList"></div>
+    <div class="tab-bar">
+      <div class="tab active" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>微信</div>
+      <div class="tab" onclick="showPage('page-discover')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>发现</div>
+      <div class="tab" onclick="openMe()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>我</div>
+    </div>
+  </div>
+
+  <div class="page" id="page-discover">
+    <div class="nav">
+      <div class="back" onclick="showPage('page-main')"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>微信</div>
+      <div class="title">发现</div>
+    </div>
+    <div class="moment-compose" id="momentCompose">
+      <textarea id="momentText" placeholder="这一刻的想法..."></textarea>
+      <button class="post-btn" onclick="postMoment()">发表</button>
+      <div class="moment-count" id="momentCount">已发 0 / 10 遍</div>
+    </div>
+    <div class="moment-list" id="momentList"></div>
+    <div class="tab-bar">
+      <div class="tab" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>微信</div>
+      <div class="tab active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>发现</div>
+      <div class="tab" onclick="openMe()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>我</div>
+    </div>
+  </div>
+
+  <div class="page" id="page-me">
+    <div class="nav">
+      <div class="back" onclick="showPage('page-main')"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>微信</div>
+      <div class="title">我</div>
+    </div>
+    <div class="me-header">
+      <div class="me-avatar"><img id="meAvatar" src="" alt=""></div>
+      <div class="me-name" id="meName"></div>
+    </div>
+    <div class="me-list">
+      <div class="me-item"><span>微信余额</span><span class="value" id="meBalance">¥12380.00</span></div>
+    </div>
+    <div class="me-tip" id="meTip"></div>
+    <div class="tab-bar">
+      <div class="tab" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>微信</div>
+      <div class="tab" onclick="showPage('page-discover')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>发现</div>
+      <div class="tab active"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>我</div>
+    </div>
+  </div>
+
+  <div class="page" id="page-chat">
+    <div class="nav">
+      <div class="back" onclick="goMain()"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>微信</div>
+      <div style="position:absolute;left:50%;transform:translateX(-50%);text-align:center">
+        <div class="title" id="chatTitle">主人</div>
+        <div class="sub" id="dayLabel">第 1 / 10 天</div>
+      </div>
+    </div>
+    <div class="chat-area" id="chatArea"></div>
+    <div class="action-panel" id="actionPanel"></div>
+    <button class="next-day-btn" id="nextDayBtn" onclick="goNextDay()">进入下一天</button>
+    <div class="input-bar" id="inputBar">
+      <div class="icon-btn" onclick="openTransfer()"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></div>
+      <input type="text" id="msgInput" placeholder="" autocomplete="off">
+      <button class="send-btn" id="sendBtn" onclick="sendMsg()">发送</button>
+    </div>
+    <div class="safe-area"></div>
+  </div>
+
+  <div class="overlay" id="transferOverlay">
+    <div class="transfer-sheet">
+      <div class="tf-title">转账</div>
+      <div class="tf-to"><img id="tfAvatar" src="" alt=""><div><div id="tfName">主人</div><div style="font-size:12px;color:#999">微信转账</div></div></div>
+      <input type="number" class="tf-amount-input" id="tfAmount" placeholder="0.00">
+      <div class="tf-hint" id="tfHint">请输入转账金额</div>
+      <button class="tf-confirm" onclick="confirmTransfer()">转账</button>
+      <div class="tf-cancel" onclick="closeOverlay('transferOverlay')">取消</div>
+    </div>
+  </div>
+
+  <div class="overlay" id="pwdOverlay">
+    <div class="pwd-sheet">
+      <div class="pwd-title">请输入支付密码</div>
+      <div class="pwd-amount" id="pwdAmountShow">¥0.00</div>
+      <div class="pwd-dots" id="pwdDots"><div class="pwd-dot"></div><div class="pwd-dot"></div><div class="pwd-dot"></div><div class="pwd-dot"></div><div class="pwd-dot"></div><div class="pwd-dot"></div></div>
+      <div class="pwd-error" id="pwdError"></div>
+      <div class="numpad">
+        <button class="num-btn" onclick="pwdInput('1')">1</button><button class="num-btn" onclick="pwdInput('2')">2</button><button class="num-btn" onclick="pwdInput('3')">3</button>
+        <button class="num-btn" onclick="pwdInput('4')">4</button><button class="num-btn" onclick="pwdInput('5')">5</button><button class="num-btn" onclick="pwdInput('6')">6</button>
+        <button class="num-btn" onclick="pwdInput('7')">7</button><button class="num-btn" onclick="pwdInput('8')">8</button><button class="num-btn" onclick="pwdInput('9')">9</button>
+        <button class="num-btn empty"></button><button class="num-btn" onclick="pwdInput('0')">0</button><button class="num-btn" onclick="pwdDelete()">⌫</button>
+      </div>
+      <div class="tf-cancel" style="margin-top:16px" onclick="closeOverlay('pwdOverlay')">取消</div>
+    </div>
+  </div>
+
+  <div class="overlay" id="uploadOverlay">
+    <div class="upload-sheet">
+      <div class="tf-title">上传截图</div>
+      <p style="text-align:center;color:#666;font-size:14px;margin-bottom:16px" id="uploadHint">可选择截图，也可直接确认上传</p>
+      <input type="file" id="uploadFile" accept="image/*" style="width:100%;margin-bottom:16px">
+      <button class="tf-confirm" onclick="confirmUpload()">确认上传</button>
+      <div class="tf-cancel" onclick="closeOverlay('uploadOverlay')">取消</div>
+    </div>
+  </div>
+
+  <div id="narrationOverlay">
+    <div class="nar-text" id="narText"></div>
+    <div class="nar-time" id="narTime"></div>
+    <button class="nar-continue" id="narContinue" onclick="finishNarration()">点击继续</button>
+  </div>
+
+  <div class="ending-screen" id="endingScreen">
+    <h2>好友已删除</h2>
+    <p>她把你删了。<br>聊天记录还在，但再也发不出去消息。<br><br>—— 前期结束 ——</p>
+    <button onclick="location.reload()">重新开始</button>
+  </div>
+</div>
+
+<script>
+const AVATAR_HER="https://i.postimg.cc/gc1CWyrp/I-R-I-S-140014665-p1.png";
+const AVATAR_ME="https://i.postimg.cc/jS4mPGcb/Picsart-26-04-28-10-52-06-479.png";
+const AVATAR_MOM="https://api.dicebear.com/7.x/avataaars/svg?seed=mom&backgroundColor=ffd5dc";
+const AVATAR_DAD="https://api.dicebear.com/7.x/avataaars/svg?seed=dad&backgroundColor=b6e3f4";
+const AVATAR_COL="https://api.dicebear.com/7.x/avataaars/svg?seed=colleague&backgroundColor=c0aede";
+
+let playerName="",payPassword="",balance=0,currentDay=1,currentChat=null,step=0;
+let pendingTransfer=null,pwdBuffer="",timerInterval=null,timerLeft=0,momentPosts=0;
+let dayFlags={},inputMode=null;
+let histories={主人:[],妈妈:[],爸爸:[],女同事:[]}; // 所有人聊天记录
+let chatPreviews={主人:"",妈妈:"今天降温了，记得多穿点。",爸爸:"有空回家看看。",女同事:"明天开会别迟到哦"};
+let chatTimes={主人:"",妈妈:"昨天",爸爸:"昨天",女同事:"昨天"};
+
+// 微信风格时间：基准 9月7日 起算
+const dayMeta={
+  1:{label:"第一天 · 9月7日 晚上", time:"21:14", listTime:"昨天", dateStr:"9月7日 晚上21:14"},
+  2:{label:"第二天 · 9月8日 中午", time:"12:37", listTime:"中午", dateStr:"9月8日 中午12:37"},
+  3:{label:"第三天 · 9月9日 晚上", time:"22:08", listTime:"晚上", dateStr:"9月9日 晚上22:08"},
+  4:{label:"第四天 · 9月10日 下午", time:"15:20", listTime:"下午", dateStr:"9月10日 下午15:20"},
+  5:{label:"第五天 · 9月11日 晚上", time:"21:00", listTime:"晚上", dateStr:"9月11日 晚上21:00"},
+  6:{label:"第六天 · 9月12日 中午", time:"12:00", listTime:"中午", dateStr:"9月12日 中午12:00"},
+  7:{label:"第七天 · 9月13日 晚上", time:"20:30", listTime:"晚上", dateStr:"9月13日 晚上20:30"},
+  8:{label:"第八天 · 9月14日 下午", time:"16:00", listTime:"下午", dateStr:"9月14日 下午16:00"},
+  9:{label:"第九天 · 9月15日 晚上", time:"22:00", listTime:"晚上", dateStr:"9月15日 晚上22:00"},
+  10:{label:"第十天 · 9月16日 晚上", time:"23:00", listTime:"晚上", dateStr:"9月16日 晚上23:00"}
+};
+const dayTitles=Object.fromEntries(Object.entries(dayMeta).map(([k,v])=>[k,v.label]));
+
+function syncTimeline(){
+  const m=dayMeta[currentDay]; if(!m) return;
+  chatTimes["主人"]=m.listTime;
+  $("clock").textContent=m.time;
+  // 列表相对时间（微信风格）
+  const rel=["","昨天","前天","3天前","4天前","5天前","一周前","一周前","一周前","一周前","一周前"];
+  chatTimes["妈妈"]= currentDay<=2 ? "昨天" : (currentDay<=4 ? "前天" : rel[Math.min(currentDay,10)]);
+  chatTimes["爸爸"]=chatTimes["妈妈"];
+  chatTimes["女同事"]= currentDay<=3 ? "昨天" : (currentDay<=6 ? "3天前" : "一周前");
+}
+
+function $(id){return document.getElementById(id)}
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  $(id).classList.add("active");
+  if(id==="page-discover"){
+    // 第三天任务时显示发布框
+    if(currentDay===3 && step>=1 && momentPosts<10) $("momentCompose").style.display="block";
+    else if(currentDay!==3 || momentPosts>=10) $("momentCompose").style.display= currentDay===3 && momentPosts>=10 ? "none" : "none";
+    // 平时也可以发动态（非任务）
+    if(currentDay!==3 || step<1) $("momentCompose").style.display="block";
+    if(currentDay===3 && momentPosts>=10) $("momentCompose").style.display="none";
+  }
+}
+function escapeHtml(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}
+function scrollChat(){const a=$("chatArea");a.scrollTop=a.scrollHeight}
+// 状态栏时间由 syncTimeline 按剧情天数控制，不再用真实时间覆盖
+
+function finishSetup(){
+  const name=$("inputName").value.trim();
+  const pwd=$("inputPwd").value.trim();
+  if(!name){alert("请输入你的名字");return}
+  if(!/^\d{6}$/.test(pwd)){alert("请设置6位数字支付密码");return}
+  playerName=name;payPassword=pwd;
+  // 工资余额 1500~2000
+  balance=Math.floor(Math.random()*501)+1500;
+  $("meName").textContent=playerName;$("meAvatar").src=AVATAR_ME;updateBalance();
+  initMoments();
+  // 初始化爸妈同事历史
+  histories["妈妈"]=[{who:"her",text:"今天降温了，记得多穿点衣服。",av:AVATAR_MOM},{who:"me",text:"知道了妈。"}];
+  histories["爸爸"]=[{who:"her",text:"有空回家看看。",av:AVATAR_DAD}];
+  histories["女同事"]=[{who:"her",text:"明天开会别迟到哦～资料我放共享盘了",av:AVATAR_COL}];
+  syncTimeline();
+  playNarration([`你叫「${playerName}」，28岁，普通上班族。`,`半个多月前，你在一个私密小群里认识了「她」。她不允许你叫名字，只准叫「主人」。`,`今天是你们正式约定「试着把一点点控制权交出去」的第一天。`],dayTitles[1],()=>{buildMainList();showPage("page-main")});
+}
+function updateBalance(){$("meBalance").textContent="¥"+balance.toFixed(2)}
+
+function playNarration(lines,timeLabel,cb){
+  const overlay=$("narrationOverlay"),textEl=$("narText"),timeEl=$("narTime"),btn=$("narContinue");
+  textEl.innerHTML="";timeEl.textContent="";timeEl.classList.remove("show");btn.classList.remove("show");overlay.classList.add("show");
+  const full=Array.isArray(lines)?lines.join("\n\n"):lines;let i=0;
+  function typeNext(){
+    if(i<full.length){textEl.innerHTML+=full[i]==="\n"?"<br>":escapeHtml(full[i]);i++;setTimeout(typeNext,40)}
+    else{setTimeout(()=>{timeEl.textContent=timeLabel||"";timeEl.classList.add("show");setTimeout(()=>btn.classList.add("show"),400)},400)}
+  }
+  window._narCb=cb;typeNext();
+}
+function finishNarration(){$("narrationOverlay").classList.remove("show");if(window._narCb){const c=window._narCb;window._narCb=null;c()}}
+
+function buildMainList(){
+  const badge = (currentDay<=10 && !dayFlags["day"+currentDay]) ? '<div class="badge">1</div>' : '';
+  $("chatList").innerHTML=`
+    <div class="chat-item" onclick="openChat('主人')"><div class="avatar"><img src="${AVATAR_HER}"></div><div class="info"><div class="name-row"><span class="name">主人</span><span class="time">${chatTimes["主人"]}</span></div><div class="preview">${chatPreviews["主人"]}</div></div>${badge}</div>
+    <div class="chat-item" onclick="openChat('妈妈')"><div class="avatar"><img src="${AVATAR_MOM}"></div><div class="info"><div class="name-row"><span class="name">妈妈</span><span class="time">${chatTimes["妈妈"]}</span></div><div class="preview">${chatPreviews["妈妈"]}</div></div></div>
+    <div class="chat-item" onclick="openChat('爸爸')"><div class="avatar"><img src="${AVATAR_DAD}"></div><div class="info"><div class="name-row"><span class="name">爸爸</span><span class="time">${chatTimes["爸爸"]}</span></div><div class="preview">${chatPreviews["爸爸"]}</div></div></div>
+    <div class="chat-item" onclick="openChat('女同事')"><div class="avatar"><img src="${AVATAR_COL}"></div><div class="info"><div class="name-row"><span class="name">女同事</span><span class="time">${chatTimes["女同事"]}</span></div><div class="preview">${chatPreviews["女同事"]}</div></div></div>
+  `;
+}
+
+function updatePreview(who, text){
+  chatPreviews[who]=text.length>20?text.slice(0,20)+"…":text;
+  chatTimes[who]="刚刚";
+}
+
+function renderHistory(who){
+  $("chatArea").innerHTML="";
+  (histories[who]||[]).forEach(m=>{
+    if(m.type==="transfer") addTransferBubble(m.amount,m.fromMe,true,m.av);
+    else if(m.type==="link") addLinkBubble(m.url,true);
+    else if(m.type==="img") addBubble("me","[图片]",null,true);
+    else if(m.type==="time"){const d=document.createElement("div");d.className="chat-time-sep";d.textContent=m.text;$("chatArea").appendChild(d)}
+    else addBubble(m.who,m.text,m.av,true);
+  });
+}
+
+function openChat(who){
+  currentChat=who;$("chatTitle").textContent=who;
+  $("dayLabel").textContent="";
+  $("actionPanel").classList.remove("show");$("actionPanel").innerHTML="";$("nextDayBtn").classList.remove("show");
+  $("msgInput").value="";$("sendBtn").classList.remove("show");setInputHint("");
+  renderHistory(who);
+  if(who==="主人"){
+    if(!dayFlags["started"+currentDay]){
+      dayFlags["started"+currentDay]=true;
+      startDay(currentDay);
+    } else restoreActionPanel();
+  } else if(who==="妈妈") loadMomChat();
+  else if(who==="爸爸") loadDadChat();
+  else if(who==="女同事") loadColleagueChat();
+  showPage("page-chat");scrollChat();
+}
+
+function restoreActionPanel(){
+  if(currentDay===2 && step>=1 && !dayFlags.day2) showUploadAction("上传磕头截图");
+  if(currentDay===3 && step>=1 && !dayFlags.day3){
+    if(momentPosts>=10 || dayFlags.momentDone) showUploadAction("上传动态截图");
+    else showAction("去「发现」页发动态，完成后回来上传截图");
+  }
+  if(currentDay===5 && dayFlags.day5step===1) showUploadAction("上传生殖器照片");
+  if(currentDay===5 && dayFlags.day5step===2) showUploadAction("上传精液照片");
+  if(currentDay===7 && !dayFlags.day7done) showUploadAction("上传留言截图");
+  if(currentDay===9 && !dayFlags.day9) showUploadAction("上传已发送的截图");
+  if(dayFlags.day1||dayFlags.day2||dayFlags.day3||dayFlags.day4||dayFlags.day5||dayFlags.day6||dayFlags.day7done||dayFlags.day8||dayFlags.day9){
+    if(dayFlags["day"+currentDay] || (currentDay===7&&dayFlags.day7done)) showNextDay();
+  }
+}
+function goMain(){showPage("page-main");buildMainList()}
+
+function defaultAv(){
+  return currentChat==="妈妈"?AVATAR_MOM:currentChat==="爸爸"?AVATAR_DAD:currentChat==="女同事"?AVATAR_COL:AVATAR_HER;
+}
+function saveHistory(item){
+  if(!currentChat||!histories[currentChat]) return;
+  histories[currentChat].push(item);
+  if(item.text) updatePreview(currentChat,item.text);
+  else if(item.type==="transfer") updatePreview(currentChat,"[转账] ¥"+Number(item.amount).toFixed(2));
+  else if(item.type==="link") updatePreview(currentChat,"[链接]");
+  else if(item.type==="img") updatePreview(currentChat,"[图片]");
+}
+function addBubble(who,text,av,skipSave){
+  const row=document.createElement("div");row.className="msg-row"+(who==="me"?" self":"");
+  const a=who==="me"?AVATAR_ME:(av||defaultAv());
+  row.innerHTML=`<div class="avatar-sm"><img src="${a}"></div><div class="bubble ${who==="me"?"self":"other"}">${escapeHtml(text)}</div>`;
+  $("chatArea").appendChild(row);scrollChat();
+  if(!skipSave) saveHistory({who,text,av:a});
+}
+
+function showTyping(av){
+  const row=document.createElement("div");row.className="msg-row typing-row";row.id="typingIndicator";
+  const a=av||defaultAv();
+  row.innerHTML=`<div class="avatar-sm"><img src="${a}"></div><div class="typing-bubble"><span></span><span></span><span></span></div>`;
+  $("chatArea").appendChild(row);scrollChat();
+}
+function hideTyping(){const t=$("typingIndicator");if(t)t.remove()}
+
+function herSay(text,cb,av,delay){
+  const a=av||defaultAv();
+  showTyping(a);
+  const wait=delay||(600+Math.min(text.length*40,1800));
+  setTimeout(()=>{
+    hideTyping();
+    addBubble("her",text,a);
+    if(cb) cb();
+  },wait);
+}
+function addTransferBubble(amount,fromMe,skipSave,avOverride){
+  const row=document.createElement("div");row.className="msg-row"+(fromMe?" self":"");
+  // 对方转来用对方头像，自己转出用自己头像
+  const a=fromMe?AVATAR_ME:(avOverride||defaultAv());
+  row.innerHTML=`<div class="avatar-sm"><img src="${a}"></div><div class="bubble transfer"><div class="tf-header">微信转账</div><div class="tf-body"><div class="tf-amount">¥${Number(amount).toFixed(2)}</div><div class="tf-status">${fromMe?"已收款":"待收款"}</div></div></div>`;
+  $("chatArea").appendChild(row);scrollChat();
+  if(!skipSave) saveHistory({type:"transfer",amount,fromMe,av:a});
+}
+function addLinkBubble(url,skipSave){
+  const row=document.createElement("div");row.className="msg-row";
+  row.innerHTML=`<div class="avatar-sm"><img src="${AVATAR_HER}"></div><div class="bubble link-card other"><div style="font-size:13px;color:#888;margin-bottom:4px">链接</div><a href="${url}" target="_blank">${url}</a></div>`;
+  $("chatArea").appendChild(row);scrollChat();
+  if(!skipSave) saveHistory({type:"link",url});
+}
+
+$("msgInput").addEventListener("input",function(){$("sendBtn").classList.toggle("show",this.value.trim().length>0)});
+$("msgInput").addEventListener("keydown",e=>{if(e.key==="Enter")sendMsg()});
+
+function sendMsg(){
+  const text=$("msgInput").value.trim();if(!text)return;
+  $("msgInput").value="";$("sendBtn").classList.remove("show");addBubble("me",text);
+  if(currentChat==="主人")handleMasterReply(text);
+  else if(currentChat==="妈妈")handleMomReply(text);
+  else if(currentChat==="爸爸")handleDadReply(text);
+  else if(currentChat==="女同事")handleColleagueReply(text);
+}
+
+function startDay(day){
+  step=0;
+  syncTimeline();
+  buildMainList();
+  if(day===1)startDay1();else if(day===2)startDay2();else if(day===3)startDay3();
+  else if(day===4)startDay4();else if(day===5)startDay5();else if(day===6)startDay6();
+  else if(day===7)startDay7();else if(day===8)startDay8();else if(day===9)startDay9();
+  else if(day===10)startDay10();
+}
+
+function addTimeSep(label){
+  const d=document.createElement("div");d.className="chat-time-sep";d.textContent=label;
+  $("chatArea").appendChild(d);
+  if(currentChat) saveHistory({type:"time",text:label});
+}
+
+function setInputHint(hint){
+  $("msgInput").placeholder=hint||"";
+}
+
+function startDay1(){
+  addTimeSep(dayMeta[1].dateStr);
+  herSay("发工资了？还剩多少？报数。",()=>{
+    inputMode="balance";
+    setInputHint("输入余额数字");
+    $("meTip").textContent="去「我」查看余额，再回来输入正确数字";
+    showAction("先去底部「我」查看余额，再输入数字回复");
+  });
+}
+function startDay2(){
+  addTimeSep(dayMeta[2].dateStr);
+  herSay("饭吃完了吧？狗东西。",()=>{
+    step=0;
+    setInputHint("回复：是的，主人");
+  });
+}
+function startDay3(){
+  addTimeSep(dayMeta[3].dateStr);
+  herSay("现在在干什么？说实话。",()=>{
+    step=0;
+    setInputHint("例如：在做工作文件");
+  });
+}
+function startDay4(){
+  addTimeSep(dayMeta[4].dateStr);
+  herSay("去找你妈借钱。编得像一点，别让你爸知道。借到的全部交上来。",()=>{
+    dayFlags.needMomMoney=true;dayFlags.momDone=false;
+    setInputHint("");
+    showAction("去「妈妈」聊天编理由借钱，收到后回主人处转账");
+  });
+}
+function startDay5(){
+  addTimeSep(dayMeta[5].dateStr);
+  herSay("滚去户外。脱裤子，拍你那根废物东西上传。",()=>{
+    dayFlags.day5step=1;
+    setInputHint("");
+    showUploadAction("上传生殖器照片");
+  });
+}
+function startDay6(){
+  addTimeSep(dayMeta[6].dateStr);
+  herSay("去求你爸借钱。再卑微一点，像条狗一样。别让你妈知道。借到全交。",()=>{
+    dayFlags.needDadMoney=true;dayFlags.dadDone=false;
+    setInputHint("");
+    showAction("去「爸爸」聊天借钱，收到后转给主人");
+  });
+}
+function startDay7(){
+  addTimeSep(dayMeta[7].dateStr);
+  herSay("去你女同事动态下面留言「妈妈好美」。截图交上来。敢不写完整就等着。",()=>{
+    setInputHint("");
+    showUploadAction("上传留言截图");
+  });
+}
+function startDay8(){
+  addTimeSep(dayMeta[8].dateStr);
+  herSay("再去榨你爸妈一次。妈要300，爸要400。两边都要，立刻转我。",()=>{
+    dayFlags.needMomMoney2=true;dayFlags.needDadMoney2=true;dayFlags.momDone=false;dayFlags.dadDone=false;
+    setInputHint("");
+    showAction("分别找妈妈借300、爸爸借400，再转给主人");
+  });
+}
+function startDay9(){
+  addTimeSep(dayMeta[9].dateStr);
+  herSay("把那天户外拍的脏照片发给你女同事。发完截图。",()=>{
+    dayFlags.needSendPics=true;
+    setInputHint("");
+    showUploadAction("上传已发送的截图");
+  });
+}
+function startDay10(){
+  addTimeSep(dayMeta[10].dateStr);
+  herSay("余额清空。全部转给我。一毛不留。",()=>{
+    pendingTransfer={amount:balance,to:"主人",onSuccess:()=>{
+      balance=0;updateBalance();
+      setTimeout(()=>{herSay("够了。滚吧。",()=>setTimeout(()=>$("endingScreen").classList.add("show"),1200))},600);
+    }};
+    setInputHint("");
+    showAction("点击 + 号，输入全部余额转给主人");
+  });
+}
+
+function handleMasterReply(text){
+  if(currentDay===1){
+    if(step===0&&inputMode==="balance"){
+      const num=parseInt(text.replace(/[^\d]/g,""));
+      if(num===Math.floor(balance) || text.includes(String(Math.floor(balance)))){
+        step=1; setInputHint("");
+        herSay("转200。现在。少一毛都别想过。",()=>{
+          pendingTransfer={amount:200,to:"主人",onSuccess:()=>{
+            step=2;
+            herSay("收到。听好了：以后想撸、想射，必须先问我。擅自碰一下就等着被罚。明白了吗？",()=>{
+              inputMode="reply"; setInputHint("回复：明白了，主人"); showAction(null);
+            });
+          }};
+          showAction("点击 + 号，自己输入 200 转给主人");
+        });
+      } else herSay("你确定？再报一次，别装傻。");
+    } else if(step===2&&inputMode==="reply"){
+      if(text.includes("明白")){step=3;inputMode=null;setInputHint("");dayFlags.day1=true;showNextDay()}
+      else herSay("只会这点出息？说「明白了」。");
+    }
+  } else if(currentDay===2){
+    if(step===0&&(text.includes("是的")||text.includes("是")||text.includes("主人"))){
+      step=1; setInputHint("");
+      herSay("吃完就去锻炼。厕所隔间，磕100下头。限时，磨蹭就别怪我骂你。",()=>{
+        addLinkBubble("https://ketou-game.vercel.app/");
+        herSay("链接在这。磕完截图交上来。",()=>{
+          startTimer(60,()=>{if(!dayFlags.day2)herSay("这么慢？真废物！连磕头都不利索。")});
+          showUploadAction("上传磕头截图");
+        });
+      });
+    } else if(step===0) herSay("回答「是的，主人」。");
+  } else if(currentDay===3){
+    if(step===0&&(text.includes("工作")||text.includes("文件")||text.includes("做"))){
+      step=1; setInputHint("");
+      herSay(`去发动态。连续10遍：「${playerName}是个白痴大傻逼」。敢少一遍试试。1分钟，交截图。`,()=>{
+        $("momentCompose").style.display="block";momentPosts=0;$("momentCount").textContent="已发 0 / 10 遍";
+        startTimer(60,()=>{if(!dayFlags.day3)herSay("怎么，觉得太羞耻了？傻逼🖕🏻 连这点都做不到。")});
+        showAction("去「发现」发满10遍，再回来上传截图");
+      });
+    } else if(step===0) herSay("在干什么？说清楚，别装忙。");
+  }
+}
+
+function handleMomReply(text){
+  if((currentDay===4||currentDay===8)&&!dayFlags.momDone){
+    if(step===0){
+      step=1;
+      const isSecond=currentDay===8;
+      if(isSecond){
+        herSay("又来借？上次那笔还没用完吗？",()=>{
+          herSay("……妈再转你300。这次真的别再开口了，你爸要是知道会生气的。",()=>{
+            addTransferBubble(300,false,false,AVATAR_MOM);balance+=300;updateBalance();
+            dayFlags.momMoney=300;dayFlags.momDone=true;
+            herSay("收到回一声就行。",()=>{
+              pendingTransfer={amount:300,to:"主人",onSuccess:()=>{
+                if(dayFlags.dadDone){dayFlags.day8=true;showNextDay()}
+              }};
+            },AVATAR_MOM);
+          },AVATAR_MOM);
+        },AVATAR_MOM);
+      } else {
+        herSay("你这孩子……又怎么了？工作不顺吗？",()=>{
+          herSay("算了，妈先转你500应急。别跟你爸说，他最近血压不稳。",()=>{
+            addTransferBubble(500,false,false,AVATAR_MOM);balance+=500;updateBalance();
+            dayFlags.momMoney=500;dayFlags.momDone=true;
+            herSay("收到回个消息就行，妈不催你。",()=>{
+              pendingTransfer={amount:500,to:"主人",onSuccess:()=>{dayFlags.day4=true;showNextDay()}};
+            },AVATAR_MOM);
+          },AVATAR_MOM);
+        },AVATAR_MOM);
+      }
+    }
+  }
+}
+function handleDadReply(text){
+  if((currentDay===6||currentDay===8)&&!dayFlags.dadDone){
+    if(step===0){
+      step=1;
+      const isSecond=currentDay===8;
+      if(isSecond){
+        herSay("怎么又开口？你最近到底在搞什么？",()=>{
+          herSay("最后一次。爸转你400。别再跟你妈念叨，听见没。",()=>{
+            addTransferBubble(400,false,false,AVATAR_DAD);balance+=400;updateBalance();
+            dayFlags.dadMoney=400;dayFlags.dadDone=true;
+            pendingTransfer={amount:400,to:"主人",onSuccess:()=>{
+              if(dayFlags.momDone){dayFlags.day8=true;showNextDay()}
+            }};
+          },AVATAR_DAD);
+        },AVATAR_DAD);
+      } else {
+        herSay("又有事？你倒是说话。",()=>{
+          herSay("……行吧。爸转你800。别乱花，更别跟你妈念叨。",()=>{
+            addTransferBubble(800,false,false,AVATAR_DAD);balance+=800;updateBalance();
+            dayFlags.dadMoney=800;dayFlags.dadDone=true;
+            pendingTransfer={amount:800,to:"主人",onSuccess:()=>{dayFlags.day6=true;showNextDay()}};
+          },AVATAR_DAD);
+        },AVATAR_DAD);
+      }
+    }
+  }
+}
+function handleColleagueReply(text){
+  if(currentDay===7&&text.includes("妈妈好美")){
+    setTimeout(()=>showUploadAction("上传留言截图"),300);
+  }
+}
+
+function loadMomChat(){
+  // 历史已由 renderHistory 恢复，这里只处理任务触发
+  if((currentDay===4||currentDay===8)&&(dayFlags.needMomMoney||dayFlags.needMomMoney2)&&!dayFlags.momDone){
+    // 若最后一条不是借钱开场，则追加
+    const h=histories["妈妈"]||[];
+    const last=h[h.length-1];
+    if(!last||!last.text||(!last.text.includes("怎么了")&&!last.text.includes("又来借"))){
+      if(currentDay===8) addBubble("her","又打电话来了？说。",AVATAR_MOM);
+      else addBubble("her","儿子？这么晚了怎么了？",AVATAR_MOM);
+    }
+    step=0;
+    setInputHint("编个理由借钱，并说别告诉爸爸");
+  }
+}
+function loadDadChat(){
+  if((currentDay===6||currentDay===8)&&(dayFlags.needDadMoney||dayFlags.needDadMoney2)&&!dayFlags.dadDone){
+    const h=histories["爸爸"]||[];
+    const last=h[h.length-1];
+    if(!last||!last.text||(!last.text.includes("说")&&!last.text.includes("又开口"))){
+      if(currentDay===8) addBubble("her","又怎么了。",AVATAR_DAD);
+      else addBubble("her","说。",AVATAR_DAD);
+    }
+    step=0;
+    setInputHint("态度卑微地借钱，并说别告诉妈妈");
+  }
+}
+function loadColleagueChat(){
+  if(currentDay===7&&!dayFlags.day7done){
+    setInputHint("或在此输入：妈妈好美");
+    showAction("去「发现」页在她动态下评论「妈妈好美」，再回主人处上传截图");
+  }
+  if(currentDay===9&&dayFlags.needSendPics&&!dayFlags.day9){
+    showAction("发送图片后，回主人处上传截图证明");
+  }
+}
+
+function showAction(text){
+  const p=$("actionPanel");
+  if(!text){p.classList.remove("show");p.innerHTML="";return}
+  p.innerHTML=`<div style="text-align:center;font-size:13px;color:#666">${text}</div>`;p.classList.add("show");
+}
+function showUploadAction(hint){
+  $("actionPanel").innerHTML=`<div class="timer-bar" id="timerDisplay"></div><button class="action-btn" onclick="openUpload()">${hint||"上传截图"}</button>`;
+  $("actionPanel").classList.add("show");
+}
+function showNextDay(){$("nextDayBtn").classList.add("show");$("actionPanel").classList.remove("show")}
+function goNextDay(){
+  $("nextDayBtn").classList.remove("show");
+  // 每天固定消费 50
+  balance=Math.max(0,balance-50);updateBalance();
+  currentDay++;
+  if(currentDay>10){$("endingScreen").classList.add("show");return}
+  const m=dayMeta[currentDay];
+  playNarration([
+    `日常开销 -¥50`,
+    `当前余额 ¥${balance.toFixed(2)}`,
+    m.dateStr
+  ], dayTitles[currentDay], ()=>{
+    dayFlags["started"+currentDay]=true;
+    // 若还在主人聊天则直接开下一天，否则列表更新即可
+    if(currentChat==="主人") startDay(currentDay);
+    else buildMainList();
+    buildMainList();
+  });
+}
+
+function postMoment(){
+  const text=$("momentText").value.trim();if(!text)return;
+  if(currentDay===3 && step>=1){
+    if(!text.includes("白痴")&&!text.includes("傻逼")){alert("内容不符合要求");return}
+    momentPosts++;$("momentText").value="";$("momentCount").textContent=`已发 ${momentPosts} / 10 遍`;
+  } else {
+    $("momentText").value="";
+  }
+  const item=createMomentEl({name:playerName,av:AVATAR_ME,content:text,time:"刚刚",img:null,comments:[]}, Date.now());
+  $("momentList").insertBefore(item,$("momentList").firstChild);
+  if(currentDay===3 && momentPosts>=10){
+    $("momentCompose").style.display="none";stopTimer();
+    dayFlags.momentDone=true;
+    // 上传只在主人聊天界面进行
+    if(currentChat==="主人"){
+      addBubble("her","发完了？截图交上来。");
+      showUploadAction("上传动态截图");
+    } else {
+      alert("已发满10遍，回到「主人」聊天上传截图");
+    }
+  }
+}
+
+function startTimer(sec,onTimeout){
+  stopTimer();timerLeft=sec;
+  function tick(){
+    const d=document.getElementById("timerDisplay");if(d)d.textContent=`剩余 ${timerLeft} 秒`;
+    if(timerLeft<=0){stopTimer();if(onTimeout)onTimeout();return}timerLeft--;
+  }
+  tick();timerInterval=setInterval(tick,1000);
+}
+function stopTimer(){if(timerInterval){clearInterval(timerInterval);timerInterval=null}}
+
+function openUpload(){$("uploadFile").value="";$("uploadOverlay").classList.add("show")}
+function confirmUpload(){
+  // 可选选图，不选也能继续（避免卡住）
+  closeOverlay("uploadOverlay");stopTimer();
+  addBubble("me","[图片]");
+  if(currentDay===2){dayFlags.day2=true;setTimeout(()=>{herSay("勉勉强强。滚吧。",()=>showNextDay())},400)}
+  else if(currentDay===3){dayFlags.day3=true;setTimeout(()=>{herSay("丢人现眼的样子我记下了。",()=>showNextDay())},400)}
+  else if(currentDay===5){
+    if(dayFlags.day5step===1){dayFlags.day5step=2;setTimeout(()=>{herSay("就这？现在就地射出来，把精液也拍清楚上传。",()=>showUploadAction("上传精液照片"))},400)}
+    else{dayFlags.day5=true;setTimeout(()=>{herSay("脏东西。收着。",()=>showNextDay())},400)}
+  }
+  else if(currentDay===7){dayFlags.day7done=true;setTimeout(()=>{herSay("哈。她要是看见就有意思了。",()=>showNextDay())},400)}
+  else if(currentDay===9){dayFlags.day9=true;setTimeout(()=>{herSay("传得挺痛快啊。继续。",()=>showNextDay())},400)}
+}
+
+function openTransfer(){
+  $("tfAvatar").src=currentChat==="主人"?AVATAR_HER:(currentChat==="妈妈"?AVATAR_MOM:AVATAR_DAD);
+  $("tfName").textContent=currentChat==="主人"?"主人":currentChat;
+  $("tfAmount").value=""; // 金额必须自己输入
+  $("tfHint").textContent="请输入转账金额";
+  $("tfHint").className="tf-hint";$("transferOverlay").classList.add("show");
+}
+function closeOverlay(id){$(id).classList.remove("show")}
+function confirmTransfer(){
+  const val=parseFloat($("tfAmount").value);
+  if(isNaN(val)||val<=0){$("tfHint").textContent="请输入有效金额";$("tfHint").className="tf-hint error";return}
+  if(pendingTransfer&&Math.abs(val-pendingTransfer.amount)>0.01){$("tfHint").textContent="金额不正确";$("tfHint").className="tf-hint error";return}
+  if(val>balance){$("tfHint").textContent="余额不足";$("tfHint").className="tf-hint error";return}
+  closeOverlay("transferOverlay");pwdBuffer="";updatePwdDots();
+  $("pwdAmountShow").textContent="¥"+val.toFixed(2);$("pwdError").textContent="";
+  $("pwdOverlay").classList.add("show");$("pwdOverlay").dataset.amount=val;
+}
+function pwdInput(d){if(pwdBuffer.length>=6)return;pwdBuffer+=d;updatePwdDots();if(pwdBuffer.length===6)setTimeout(checkPwd,150)}
+function pwdDelete(){pwdBuffer=pwdBuffer.slice(0,-1);updatePwdDots();$("pwdError").textContent=""}
+function updatePwdDots(){const dots=$("pwdDots").children;for(let i=0;i<6;i++)dots[i].classList.toggle("filled",i<pwdBuffer.length)}
+function checkPwd(){
+  if(pwdBuffer!==payPassword){$("pwdError").textContent="支付密码错误";pwdBuffer="";updatePwdDots();return}
+  const amount=parseFloat($("pwdOverlay").dataset.amount);closeOverlay("pwdOverlay");
+  addTransferBubble(amount,true);balance-=amount;updateBalance();
+  if(pendingTransfer&&Math.abs(amount-pendingTransfer.amount)<0.01){
+    const cb=pendingTransfer.onSuccess;pendingTransfer=null;if(cb)setTimeout(cb,400);
+  }
+}
+function openMe(){
+  showPage("page-me");
+  $("meTip").textContent=(currentDay===1&&step===0)?"查看余额后，回到「主人」聊天输入正确数字":"";
+}
+
+function initMoments(){
+  const list=$("momentList");
+  list.innerHTML="";
+  const posts=[
+    {name:"女同事",av:AVATAR_COL,content:"周末去看了展，心情不错～",time:"2小时前",img:"https://picsum.photos/seed/museum/400/300",comments:[{name:"同事A",text:"好看！"}]},
+    {name:"妈妈",av:AVATAR_MOM,content:"今天菜市场的菜好新鲜，给你们带点回去。",time:"昨天",img:"https://picsum.photos/seed/vegetables/400/300",comments:[]},
+    {name:"爸爸",av:AVATAR_DAD,content:"单位组织体检，都要注意身体。",time:"昨天",img:"https://picsum.photos/seed/hospital/400/300",comments:[{name:"妈妈",text:"你也是"}]},
+    {name:"女同事",av:AVATAR_COL,content:"新买的口红试色，有人喜欢吗？",time:"周一",img:"https://picsum.photos/seed/lipstick/400/300",comments:[{name:"同事B",text:"色号多少？"}]},
+    {name:"妈妈",av:AVATAR_MOM,content:"记得按时吃饭，别总点外卖。",time:"周日",img:"https://picsum.photos/seed/homefood/400/300",comments:[]}
+  ];
+  posts.forEach((p,idx)=>list.appendChild(createMomentEl(p,idx)));
+}
+
+function createMomentEl(p,idx){
+  const item=document.createElement("div");item.className="moment-item";item.dataset.idx=idx;
+  let commentsHtml="";
+  (p.comments||[]).forEach(c=>{commentsHtml+=`<div class="m-comment"><span class="c-name">${c.name}</span>：${escapeHtml(c.text)}</div>`});
+  item.innerHTML=`
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <img src="${p.av}" style="width:40px;height:40px;border-radius:4px;object-fit:cover;flex-shrink:0">
+      <div style="flex:1;min-width:0">
+        <div class="m-name">${p.name}</div>
+        <div class="m-content">${escapeHtml(p.content)}</div>
+        ${p.img?`<img class="m-img" src="${p.img}" alt="">`:""}
+        <div class="m-time">${p.time}</div>
+        <div class="m-actions"><span onclick="toggleCommentInput(this)">评论</span></div>
+        <div class="m-comments" style="${commentsHtml?'':'display:none'}">${commentsHtml}
+          <div class="m-comment-input" style="display:none">
+            <input type="text" placeholder="评论..." onkeydown="if(event.key==='Enter')submitComment(this)">
+            <button onclick="submitComment(this.previousElementSibling)">发送</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  return item;
+}
+
+function toggleCommentInput(el){
+  const box=el.closest(".moment-item").querySelector(".m-comments");
+  const input=box.querySelector(".m-comment-input");
+  box.style.display="block";
+  input.style.display=input.style.display==="none"?"flex":"none";
+  if(input.style.display==="flex") input.querySelector("input").focus();
+}
+
+function submitComment(inputEl){
+  const input=inputEl.tagName==="INPUT"?inputEl:inputEl;
+  const text=input.value.trim();if(!text)return;
+  const box=input.closest(".m-comments");
+  const div=document.createElement("div");div.className="m-comment";
+  div.innerHTML=`<span class="c-name">${playerName}</span>：${escapeHtml(text)}`;
+  box.insertBefore(div, box.querySelector(".m-comment-input"));
+  input.value="";
+  // 第七天：在女同事动态下留言「妈妈好美」
+  if(currentDay===7 && text.includes("妈妈好美")){
+    dayFlags.commented=true;
+  }
+}
+</script>
+</body>
+</html>
