@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>控制权上交 · 微信聊天文游</title>
+<title>🖤小妲的十日调教小游戏🖤</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:#111;display:flex;justify-content:center;align-items:center;min-height:100vh;color:#111;padding:6px;overflow:hidden}
@@ -202,22 +202,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
   <div class="page" id="page-setup">
     <div class="setup-box">
-      <h2>控制权上交</h2>
+      <h2>登录</h2>
       <p>请先完成身份设置</p>
       <label>你的名字</label>
       <input type="text" id="inputName" placeholder="请输入你的名字" maxlength="8" value="">
       <label>设置支付密码（6位数字）</label>
       <input type="password" id="inputPwd" placeholder="请输入6位数字" maxlength="6" inputmode="numeric">
       <div class="pwd-hint">转账时需要输入此密码</div>
-      <button class="setup-btn" onclick="finishSetup()">进入微信</button>
+      <button class="setup-btn" onclick="finishSetup()">进入</button>
     </div>
   </div>
 
   <div class="page" id="page-main">
-    <div class="main-header"><h1>微信</h1><div class="search-bar">搜索</div></div>
+    <div class="main-header"><h1>聊天</h1><div class="search-bar">搜索</div></div>
     <div class="chat-list" id="chatList"></div>
     <div class="tab-bar">
-      <div class="tab active" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>微信</div>
+      <div class="tab active" onclick="showPage('page-main')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>聊天</div>
       <div class="tab" onclick="showPage('page-discover')"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>发现</div>
       <div class="tab" onclick="openMe()"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>我</div>
     </div>
@@ -225,7 +225,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
   <div class="page" id="page-discover">
     <div class="nav">
-      <div class="back" onclick="showPage('page-main')"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>微信</div>
+      <div class="back" onclick="showPage('page-main')"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>聊天</div>
       <div class="title">发现</div>
     </div>
     <div class="moment-compose" id="momentCompose">
@@ -243,7 +243,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
   <div class="page" id="page-me">
     <div class="nav">
-      <div class="back" onclick="showPage('page-main')"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>微信</div>
+      <div class="back" onclick="showPage('page-main')"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>聊天</div>
       <div class="title">我</div>
     </div>
     <div class="me-header">
@@ -251,7 +251,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
       <div class="me-name" id="meName"></div>
     </div>
     <div class="me-list">
-      <div class="me-item"><span>微信余额</span><span class="value" id="meBalance">¥12380.00</span></div>
+      <div class="me-item"><span>余额</span><span class="value" id="meBalance">¥12380.00</span></div>
     </div>
     <div class="me-tip" id="meTip"></div>
     <div class="tab-bar">
@@ -263,7 +263,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
 
   <div class="page" id="page-chat">
     <div class="nav">
-      <div class="back" onclick="goMain()"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>微信</div>
+      <div class="back" onclick="goMain()"><svg viewBox="0 0 12 20" fill="none"><path d="M10 2L2 10l8 8" stroke="#000" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>聊天</div>
       <div style="position:absolute;left:50%;transform:translateX(-50%);text-align:center">
         <div class="title" id="chatTitle">主人</div>
         <div class="sub" id="dayLabel">第 1 / 10 天</div>
@@ -289,7 +289,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
   <div class="overlay" id="transferOverlay">
     <div class="transfer-sheet">
       <div class="tf-title">转账</div>
-      <div class="tf-to"><img id="tfAvatar" src="" alt=""><div><div id="tfName">主人</div><div style="font-size:12px;color:#999">微信转账</div></div></div>
+      <div class="tf-to"><img id="tfAvatar" src="" alt=""><div><div id="tfName">主人</div><div style="font-size:12px;color:#999">转账</div></div></div>
       <input type="number" class="tf-amount-input" id="tfAmount" placeholder="0.00">
       <div class="tf-hint" id="tfHint">请输入转账金额</div>
       <button class="tf-confirm" onclick="confirmTransfer()">转账</button>
@@ -343,7 +343,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei
   </div>
 
   <div class="loading-screen" id="loadingScreen">
-    <div class="loading-title">控制权上交</div>
+    <div class="loading-title">🖤🖤🖤</div>
     <div class="loading-bar-bg"><div class="loading-bar" id="loadingBar"></div></div>
     <div class="loading-pct" id="loadingPct">资源加载中 0%</div>
   </div>
@@ -530,24 +530,24 @@ function restoreActionPanel(){
     else showAction("去「发现」页发动态，完成后回来上传截图");
   }
   if(currentDay===4 && dayFlags.momDone && !dayFlags.day4){
-    pendingTransfer={amount:500,to:"主人",onSuccess:()=>{dayFlags.day4=true;herSay("500。连亲妈的钱都上交，你还真是条狗。",()=>showNextDay())}};
+    pendingTransfer={amount:500,to:"主人",onSuccess:()=>{dayFlags.day4=true;herSay("已经连亲妈的钱都骗了，真是可悲。",()=>showNextDay())}};
     showAction("点击 + 号，转账 500 给主人");
   }
   if(currentDay===5 && dayFlags.day5step===1) showUploadAction("上传生殖器照片");
   if(currentDay===5 && dayFlags.day5step===2) showUploadAction("上传精液照片");
   if(currentDay===6 && dayFlags.dadDone && !dayFlags.day6){
-    pendingTransfer={amount:800,to:"主人",onSuccess:()=>{dayFlags.day6=true;herSay("800。你爸的辛苦钱，你倒手就交了。真没出息。",()=>showNextDay())}};
+    pendingTransfer={amount:800,to:"主人",onSuccess:()=>{dayFlags.day6=true;herSay("你爸的辛苦钱倒手就交了。真贱呢。",()=>showNextDay())}};
     showAction("点击 + 号，转账 800 给主人");
   }
   if(currentDay===7 && !dayFlags.day7done) showUploadAction("上传留言截图");
   if(currentDay===8 && dayFlags.momDone && dayFlags.dadDone && !dayFlags.day8){
-    pendingTransfer={amount:700,to:"主人",onSuccess:()=>{dayFlags.day8=true;herSay("700到账。你爸妈的钱真好骗，你更贱。",()=>showNextDay())}};
+    pendingTransfer={amount:700,to:"主人",onSuccess:()=>{dayFlags.day8=true;herSay("700到账～你爸妈的钱真好骗。",()=>showNextDay())}};
     showAction("点击 + 号，合计转账 700 给主人（300+400）");
   }
   if(currentDay===9 && dayFlags.needSendPics && !dayFlags.day9 && !dayFlags.colDeleted) showAction("去「女同事」用 + 号发图");
   if(currentDay===9 && dayFlags.colDeleted && !dayFlags.day9Eval){
     dayFlags.day9Eval=true;dayFlags.day9=true;
-    herSay("她把你删了？哈哈。废物就该被扔掉。",()=>showNextDay());
+    herSay("她把你删了？哈哈哈哈哈。",()=>showNextDay());
   }
   if(dayFlags["day"+currentDay] || (currentDay===7&&dayFlags.day7done)) showNextDay();
 }
@@ -671,7 +671,7 @@ function setInputHint(hint){
 
 function startDay1(){
   addTimeSep(dayMeta[1].dateStr);
-  herSay("发工资了？还剩多少？报数。",()=>{
+  herSay("余额还剩多少？报数。",()=>{
     inputMode="balance";
     setInputHint("输入余额数字");
     $("meTip").textContent="去「我」查看余额，再回来输入正确数字";
@@ -687,14 +687,14 @@ function startDay2(){
 }
 function startDay3(){
   addTimeSep(dayMeta[3].dateStr);
-  herSay("现在在干什么？说实话。",()=>{
+  herSay("在干嘛？",()=>{
     step=0;
     setInputHint("例如：在做工作文件");
   });
 }
 function startDay4(){
   addTimeSep(dayMeta[4].dateStr);
-  herSay("去找你妈借钱。编得像一点，别让你爸知道。借到的全部交上来。",()=>{
+  herSay("去找你妈借钱。自己编理由。借到的全部交上来。",()=>{
     dayFlags.needMomMoney=true;dayFlags.momDone=false;
     setInputHint("");
     showAction("去「妈妈」聊天编理由借钱，收到后回主人处转账");
@@ -702,7 +702,7 @@ function startDay4(){
 }
 function startDay5(){
   addTimeSep(dayMeta[5].dateStr);
-  herSay("滚去户外。脱裤子，拍你那根废物东西上传。",()=>{
+  herSay("滚去厕所。脱裤子，拍自己的小豆芽。",()=>{
     dayFlags.day5step=1;
     setInputHint("");
     showUploadAction("上传生殖器照片");
@@ -710,7 +710,7 @@ function startDay5(){
 }
 function startDay6(){
   addTimeSep(dayMeta[6].dateStr);
-  herSay("去求你爸借钱。再卑微一点，像条狗一样。别让你妈知道。借到全交。",()=>{
+  herSay("今天去求你爸借钱。自己编号理由哦。记得全部给我。",()=>{
     dayFlags.needDadMoney=true;dayFlags.dadDone=false;
     setInputHint("");
     showAction("去「爸爸」聊天借钱，收到后转给主人");
@@ -718,22 +718,22 @@ function startDay6(){
 }
 function startDay7(){
   addTimeSep(dayMeta[7].dateStr);
-  herSay("去你女同事动态下面留言「妈妈好美」。截图交上来。敢不写完整就等着。",()=>{
+  herSay("去你女同事动态下面留言「妈妈好美」。记得截图。",()=>{
     setInputHint("");
     showUploadAction("上传留言截图");
   });
 }
 function startDay8(){
   addTimeSep(dayMeta[8].dateStr);
-  herSay("再去榨你爸妈一次。妈要300，爸要400。两边都要，立刻转我。",()=>{
+  herSay("再去榨你爸妈一次。两边都得要哦。",()=>{
     dayFlags.needMomMoney2=true;dayFlags.needDadMoney2=true;dayFlags.momDone=false;dayFlags.dadDone=false;
     setInputHint("");
-    showAction("分别找妈妈借300、爸爸借400，再转给主人");
+    showAction("分别去借，再转给主人");
   });
 }
 function startDay9(){
   addTimeSep(dayMeta[9].dateStr);
-  herSay("把那天户外拍的脏照片发给你女同事。",()=>{
+  herSay("把那天拍的豆芽照片发给你女同事。",()=>{
     dayFlags.needSendPics=true;
     setInputHint("");
     showAction("去「女同事」聊天，点 + 号 → 相册 发图");
@@ -741,7 +741,7 @@ function startDay9(){
 }
 function startDay10(){
   addTimeSep(dayMeta[10].dateStr);
-  herSay("余额清空。全部转给我。一毛不留。",()=>{
+  herSay("余额清空。全部转给我。",()=>{
     pendingTransfer={amount:balance,to:"主人",onSuccess:()=>{
       balance=0;updateBalance();
       setTimeout(()=>{
@@ -772,10 +772,10 @@ function handleMasterReply(text){
       const num=parseInt(text.replace(/[^\d]/g,""));
       if(num===Math.floor(balance) || text.includes(String(Math.floor(balance)))){
         step=1; setInputHint("");
-        herSay("转200。现在。少一毛都别想过。",()=>{
+        herSay("转200。现在。",()=>{
           pendingTransfer={amount:200,to:"主人",onSuccess:()=>{
             step=2;
-            herSay("收到。听好了：以后想撸、想射，必须先问我。擅自碰一下就等着被罚。明白了吗？",()=>{
+            herSay("听好了哦，以后想撸、想射，必须先问我。明白了吗？",()=>{
               inputMode="reply"; setInputHint("回复：明白了，主人"); showAction(null);
             });
           }};
@@ -784,12 +784,12 @@ function handleMasterReply(text){
       } else herSay("你确定？再报一次，别装傻。");
     } else if(step===2&&inputMode==="reply"){
       if(text.includes("明白")){step=3;inputMode=null;setInputHint("");dayFlags.day1=true;showNextDay()}
-      else herSay("只会这点出息？说「明白了」。");
+      else herSay("只有这点出息？说「明白了」。");
     }
   } else if(currentDay===2){
     if(step===0&&(text.includes("是的")||text.includes("是")||text.includes("主人"))){
       step=1; setInputHint("");
-      herSay("吃完就去锻炼。厕所隔间，磕100下头。限时，磨蹭就别怪我骂你。",()=>{
+      herSay("吃完就得去锻炼。厕所隔间，磕100下头。限时，磨蹭就别怪我骂你。",()=>{
         addLinkBubble("https://ketou-game.vercel.app/");
         herSay("链接在这。磕完用 + 号发截图上来。",()=>{
           startTimer(60,()=>{if(!dayFlags.day2)herSay("这么慢？真废物！连磕头都不利索。")});
@@ -815,7 +815,7 @@ function setupDay8Transfer(){
     pendingTransfer={amount:700,to:"主人",onSuccess:()=>{
       dayFlags.day8=true;
       if(currentChat==="主人"){
-        herSay("700到账。你爸妈的钱真好骗，你更贱。",()=>showNextDay());
+        herSay("700到账。你爸妈的钱真好骗。",()=>showNextDay());
       } else showNextDay();
     }};
   }
@@ -826,23 +826,23 @@ function handleMomReply(text){
       step=1;
       const isSecond=currentDay===8;
       if(isSecond){
-        herSay("又来借？上次那笔还没用完吗？",()=>{
-          herSay("……妈再转你300。这次真的别再开口了，你爸要是知道会生气的。",()=>{
+        herSay("？上次那笔用完了吗？",()=>{
+          herSay("……妈最后转你300。",()=>{
             addTransferBubble(300,false,false,AVATAR_MOM);balance+=300;updateBalance();
             dayFlags.momMoney=300;dayFlags.momDone=true;
-            herSay("点开转账收一下。收到回一声就行。",null,AVATAR_MOM);
+            herSay("爸妈挣钱不容易啊",null,AVATAR_MOM);
             setupDay8Transfer();
           },AVATAR_MOM);
         },AVATAR_MOM);
       } else {
-        herSay("你这孩子……又怎么了？工作不顺吗？",()=>{
+        herSay("你这孩子……",()=>{
           herSay("算了，妈先转你500应急。别跟你爸说，他最近血压不稳。",()=>{
             addTransferBubble(500,false,false,AVATAR_MOM);balance+=500;updateBalance();
             dayFlags.momMoney=500;dayFlags.momDone=true;
-            herSay("点开转账收一下。收到回个消息就行，妈不催你。",()=>{
+            herSay("慢慢来，妈不催你。",()=>{
               pendingTransfer={amount:500,to:"主人",onSuccess:()=>{
                 dayFlags.day4=true;
-                if(currentChat==="主人") herSay("500。连亲妈的钱都上交，你还真是条狗。",()=>showNextDay());
+                if(currentChat==="主人") herSay("连亲妈的钱都已经骗到了，你还真贱呢。",()=>showNextDay());
                 else showNextDay();
               }};
             },AVATAR_MOM);
@@ -858,23 +858,23 @@ function handleDadReply(text){
       step=1;
       const isSecond=currentDay===8;
       if(isSecond){
-        herSay("怎么又开口？你最近到底在搞什么？",()=>{
-          herSay("最后一次。爸转你400。别再跟你妈念叨，听见没。",()=>{
+        herSay("？你最近到底在搞什么？",()=>{
+          herSay("最后一次。转你400。剩下的自己看着办。",()=>{
             addTransferBubble(400,false,false,AVATAR_DAD);balance+=400;updateBalance();
             dayFlags.dadMoney=400;dayFlags.dadDone=true;
-            herSay("自己点开收。",null,AVATAR_DAD);
+            herSay("自己悠着点。",null,AVATAR_DAD);
             setupDay8Transfer();
           },AVATAR_DAD);
         },AVATAR_DAD);
       } else {
-        herSay("又有事？你倒是说话。",()=>{
-          herSay("……行吧。爸转你800。别乱花，更别跟你妈念叨。",()=>{
+        herSay("？",()=>{
+          herSay("唉……行吧。爸转你800。别乱花，更别跟你妈念叨。",()=>{
             addTransferBubble(800,false,false,AVATAR_DAD);balance+=800;updateBalance();
             dayFlags.dadMoney=800;dayFlags.dadDone=true;
-            herSay("点开收钱。",()=>{
+            herSay("收了吧。",()=>{
               pendingTransfer={amount:800,to:"主人",onSuccess:()=>{
                 dayFlags.day6=true;
-                if(currentChat==="主人") herSay("800。你爸的辛苦钱，你倒手就交了。真没出息。",()=>showNextDay());
+                if(currentChat==="主人") herSay("你爸的辛苦钱倒手就交了。真是好样的。",()=>showNextDay());
                 else showNextDay();
               }};
             },AVATAR_DAD);
@@ -894,14 +894,14 @@ function loadMomChat(){
   // 不主动先发，等玩家先开口借钱
   if((currentDay===4||currentDay===8)&&(dayFlags.needMomMoney||dayFlags.needMomMoney2)&&!dayFlags.momDone){
     step=0;
-    setInputHint("先发消息编理由借钱，并说别告诉爸爸");
+    setInputHint("发消息");
     showAction("输入理由向妈妈借钱");
   }
 }
 function loadDadChat(){
   if((currentDay===6||currentDay===8)&&(dayFlags.needDadMoney||dayFlags.needDadMoney2)&&!dayFlags.dadDone){
     step=0;
-    setInputHint("先发消息，态度卑微地借钱，并说别告诉妈妈");
+    setInputHint("发消息");
     showAction("输入内容向爸爸借钱");
   }
 }
@@ -968,7 +968,7 @@ function postMoment(){
     $("momentCompose").style.display="none";stopTimer();
     dayFlags.momentDone=true;
     if(currentChat==="主人"){
-      herSay("发完了？截图交上来。",()=>showUploadAction("上传动态截图"));
+      herSay("发完了？截图。",()=>showUploadAction("上传动态截图"));
     } else {
       alert("已发布，回到「主人」聊天上传截图");
     }
@@ -1018,7 +1018,7 @@ function confirmUpload(){
     dayFlags.sentPics=true;
     setTimeout(()=>{
       herSay("？？你发的什么东西？",()=>{
-        herSay("你有病吧……别再联系我了。",()=>{
+        herSay("你有病吧……",()=>{
           setTimeout(()=>{
             // 被删好友
             dayFlags.colDeleted=true;
